@@ -7,6 +7,8 @@ const FacebookStrategy = require("passport-facebook");
 require("dotenv").config();
 require("./configs/mongoConfig");
 const session = require("express-session");
+const jwtConfirmation = require("./middleware/jwtAuth");
+const auth = require("./utils/auth");
 
 const User = require("./models/user");
 
@@ -26,7 +28,6 @@ app.use(
 );
 
 app.use(passport.initialize());
-app.use(passport.session());
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -42,14 +43,17 @@ app.get("/login/facebook", passport.authenticate("facebook"));
 app.get(
   "/auth/redirect/facebook",
   passport.authenticate("facebook", {
-    failureRedirect: "/login",
+    failureRedirect: "/login/facebook",
     failureMessage: true,
   }),
   (req, res) => {
     console.log("authentication succeeded");
     console.log(req.user);
-    res.redirect("/");
+    console.log("setting token:", auth.genToken(req.user));
+    return res.cookie("odinbooktoken", auth.genToken(req.user)).redirect("/");
   }
 );
+
+app.use(jwtConfirmation);
 
 module.exports = app;
