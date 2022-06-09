@@ -4,8 +4,10 @@ require("dotenv").config();
 
 const jwtAuth = (req, res, next) => {
   const token = req.cookies.odinbooktoken;
-  if (!token)
+  if (!token) {
+    console.log("no token found; redirecting...");
     return res.status(403).redirect("http://localhost:3000/login/facebook");
+  }
   try {
     const data = jwt.verify(token, process.env.JWT_SECRET);
     console.log(data);
