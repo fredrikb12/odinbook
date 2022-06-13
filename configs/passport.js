@@ -11,8 +11,21 @@ passport.use(
       callbackURL: "http://localhost:3000/auth/redirect/facebook",
       enableProof: true,
     },
-    (accessToken, refreshToken, profile, cb) => {
-      mongoDB.findOrCreateNewUser(accessToken, refreshToken, profile, cb);
+    async (accessToken, refreshToken, profile, cb) => {
+      const foundUser = await mongoDB
+        .findUser({ facebook_id: profile.id }, cb)
+        .catch((e) => cb(e));
+      if (!foundUser) {
+        mongoDB.createUser(
+          {
+            name: profile.displayName,
+            facebook_id: profile.id,
+          },
+          cb
+        );
+      } else {
+        cb(null, foundUser);
+      }
     }
   )
 );
