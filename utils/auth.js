@@ -4,7 +4,7 @@ require("dotenv").config();
 const auth = {
   genToken: (user) => {
     return jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1800s",
+      expiresIn: process.env.JWT_EXPIRY,
     });
   },
 
