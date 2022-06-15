@@ -7,7 +7,6 @@ const {
   users_userId_GET,
 } = require("../controllers/userController");
 
-/* GET users listing. */
 router.get("/", users_GET);
 
 router.get("/:userId", users_userId_GET);
