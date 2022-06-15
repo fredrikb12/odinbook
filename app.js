@@ -18,6 +18,7 @@ const Post = require("./models/post");
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
+const fRequestRouter = require("./routes/friendRequests");
 
 const app = express();
 
@@ -58,5 +59,6 @@ app.get(
 app.use(jwtConfirmation);
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/friendrequests", fRequestRouter);
 
 module.exports = app;
