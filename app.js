@@ -11,6 +11,10 @@ const jwtConfirmation = require("./middleware/jwtAuth");
 const auth = require("./utils/auth");
 
 const User = require("./models/user");
+const Comment = require("./models/comment");
+const FriendRequest = require("./models/friendRequest");
+const Like = require("./models/like");
+const Post = require("./models/post");
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
@@ -35,9 +39,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
-
 app.get("/login/facebook", passport.authenticate("facebook"));
 
 app.get(
@@ -55,5 +56,7 @@ app.get(
 );
 
 app.use(jwtConfirmation);
+app.use("/", indexRouter);
+app.use("/users", usersRouter);
 
 module.exports = app;
