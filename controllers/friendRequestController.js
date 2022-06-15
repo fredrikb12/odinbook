@@ -60,6 +60,30 @@ exports.friendRequests_POST = [
   },
 ];
 
-/*exports.friendRequests_DELETE = async (req, res, next) => {
+exports.friendRequests_DELETE = async (req, res, next) => {
   const requestId = req.params.friendRequestId;
-};*/
+  const foundRequest = await FriendRequest.findById(requestId)
+    .populate("sender receiver", "name")
+    .catch((e) => next(e));
+  console.log(foundRequest.sender._id.toString());
+  console.log(req.cookieToken._id);
+  if (!foundRequest)
+    return res
+      .status(404)
+      .json({ request: null, message: "Friend request does not exist." });
+  else if (
+    foundRequest.sender._id.toString() === req.cookieToken._id ||
+    foundRequest.receiver._id.toString() === req.cookieToken._id
+  ) {
+    const deletedRequest = await FriendRequest.findByIdAndDelete(
+      requestId
+    ).catch((e) => next(e));
+    return res
+      .status(200)
+      .json({ request: foundRequest, message: "Request has been deleted." });
+  } else {
+    return res
+      .status(403)
+      .json({ request: null, message: "You can't access this resource." });
+  }
+};

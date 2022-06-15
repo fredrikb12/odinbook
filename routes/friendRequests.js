@@ -7,6 +7,6 @@ const {
 
 router.post("/", friendRequests_POST);
 
-//router.delete("/:friendRequestid", friendRequests_DELETE);
+router.delete("/:friendRequestId", friendRequests_DELETE);
 
 module.exports = router;
