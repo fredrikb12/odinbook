@@ -52,7 +52,9 @@ app.get(
     console.log("authentication succeeded");
     console.log(req.user);
     console.log("setting token:", auth.genToken(req.user));
-    return res.cookie("odinbooktoken", auth.genToken(req.user)).redirect("/");
+    return res
+      .cookie("odinbooktoken", auth.genToken(req.user), { httpOnly: true })
+      .redirect("/");
   }
 );
 
