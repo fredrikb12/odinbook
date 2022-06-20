@@ -1,6 +1,11 @@
 const FriendRequest = require("../models/friendRequest");
 const User = require("../models/user");
 const { body, validationResult } = require("express-validator");
+const {
+  hasValidationError,
+  getValidationErrors,
+} = require("../utils/validationHelpers");
+const { createResponse } = require("../utils/responseHelpers");
 
 exports.friendRequests_POST = [
   body("receiver", "Receiving user must be specified")
@@ -12,13 +17,15 @@ exports.friendRequests_POST = [
       else return Promise.resolve(id);
     }),
   async (req, res, next) => {
-    const errors = validationResult(body);
-    if (!errors.isEmpty) {
-      return res.status(400).json({
-        statusCode: 400,
-        message: "No receiving user was sent to the server",
-        errors,
-      });
+    if (hasValidationError(req)) {
+      return createResponse(
+        res,
+        {
+          message: "No receiving user was sent to the server",
+          errors: getValidationErrors(req),
+        },
+        400
+      );
     }
 
     const sender = req.cookieToken._id;
@@ -27,9 +34,7 @@ exports.friendRequests_POST = [
       (e) => next(e)
     );
     if (prevRequest) {
-      return res
-        .status(400)
-        .json({ message: "Request already sent.", statusCode: 400 });
+      return createResponse(res, { message: "Request already sent." }, 400);
     }
 
     try {
@@ -53,13 +58,16 @@ exports.friendRequests_POST = [
         savedSender,
         savedReceiver,
       ]);
-
-      return res.status(200).json({
-        request: waitForPushes[0],
-        sender: waitForPushes[1].name,
-        receiver: waitForPushes[2].name,
-        message: "Friend request sent",
-      });
+      return createResponse(
+        res,
+        {
+          request: waitForPushes[0],
+          sender: waitForPushes[1].name,
+          receiver: waitForPushes[2].name,
+          message: "Friend request sent",
+        },
+        200
+      );
     } catch (e) {
       return next(e);
     }
@@ -71,11 +79,13 @@ exports.friendRequests_DELETE = async (req, res, next) => {
   const foundRequest = await FriendRequest.findById(requestId)
     .populate("sender receiver", "name")
     .catch((e) => next(e));
-  if (!foundRequest)
-    return res
-      .status(404)
-      .json({ request: null, message: "Friend request does not exist." });
-  else if (
+  if (!foundRequest) {
+    return createResponse(
+      res,
+      { request: null, message: "Friend request does not exist." },
+      404
+    );
+  } else if (
     foundRequest.sender._id.toString() === req.cookieToken._id ||
     foundRequest.receiver._id.toString() === req.cookieToken._id
   ) {
@@ -105,17 +115,34 @@ exports.friendRequests_DELETE = async (req, res, next) => {
           new Error("Something went wrong deleting this friend request")
         );
       }
-      return res
-        .status(200)
-        .json({ request: foundRequest, message: "Request has been deleted." });
+      return createResponse(
+        res,
+        { request: foundRequest, message: "Request has been deleted." },
+        200
+      );
     } catch (e) {
       return next(e);
     }
   } else {
-    return res
-      .status(403)
-      .json({ request: null, message: "You can't access this resource." });
+    return createResponse(
+      res,
+      { request: null, message: "You can't access this resource." },
+      403
+    );
   }
 };
 
-exports.friendRequests_ACCEPT = async (req, res, next) => {};
+/*exports.friendRequests_PUT = [
+  body("requestAction", "Request action must be specified").exists().escape(),
+  async (req, res, next) => {
+    if (hasValidationError(req)) {
+      return createResponse(
+        res,
+        { message: "Something went wrong handling this friend request." },
+        400
+      );
+    }
+    const currentUserId = req.cookieToken._id;
+    const requestId = req.params.friendRequestId;
+  },
+];*/
