@@ -74,7 +74,7 @@ exports.friendRequests_POST = [
   },
 ];
 
-exports.friendRequests_DELETE = async (req, res, next) => {
+exports.friendRequests_CANCEL = async (req, res, next) => {
   const requestId = req.params.friendRequestId;
   const foundRequest = await FriendRequest.findById(requestId)
     .populate("sender receiver", "name")
@@ -107,14 +107,6 @@ exports.friendRequests_DELETE = async (req, res, next) => {
         deletedSenderReq,
         deletedReceiverReq,
       ]);
-      const foundRejection = promises?.find(
-        (promise) => promise.status === "rejected"
-      );
-      if (foundRejection) {
-        return next(
-          new Error("Something went wrong deleting this friend request")
-        );
-      }
       return createResponse(
         res,
         { request: foundRequest, message: "Request has been deleted." },
@@ -132,17 +124,98 @@ exports.friendRequests_DELETE = async (req, res, next) => {
   }
 };
 
-/*exports.friendRequests_PUT = [
-  body("requestAction", "Request action must be specified").exists().escape(),
+exports.friendRequests_PUT = [
+  body("requestAction", "Request action must be specified")
+    .exists()
+    .escape()
+    .custom((requestAction) => {
+      if (requestAction !== "read" && requestAction !== "accepted") {
+        return Promise.reject("Request action is invalid.");
+      } else {
+        return Promise.resolve(requestAction);
+      }
+    }),
   async (req, res, next) => {
     if (hasValidationError(req)) {
       return createResponse(
         res,
-        { message: "Something went wrong handling this friend request." },
+        {
+          message: "Something went wrong handling this friend request.",
+          errors: getValidationErrors(req),
+        },
         400
       );
     }
     const currentUserId = req.cookieToken._id;
     const requestId = req.params.friendRequestId;
+    const request = await FriendRequest.findById(requestId)
+      .populate("sender receiver", "name")
+      .catch((e) => {
+        return createResponse(
+          res,
+          {
+            message: "Something went wrong trying to find this friend request.",
+          },
+          404
+        );
+      });
+    if (!request) {
+      return createResponse(
+        res,
+        { message: "This request could not be found." },
+        404
+      );
+    }
+    const senderId = request.sender._id.toString();
+    const receiverId = request.receiver._id.toString();
+    if (senderId !== currentUserId && receiverId !== currentUserId) {
+      console.log("Current user is not authorized to change this resource");
+      return createResponse(
+        res,
+        { message: "You are not authorized to change this request status" },
+        403
+      );
+    }
+    const requestAction = req.body.requestAction;
+    debugger;
+    try {
+      if (requestAction === "read") {
+        const savedRequest = await FriendRequest.findByIdAndUpdate(requestId, {
+          read: true,
+        }).populate("sender receiver", "name");
+        return createResponse(
+          res,
+          { message: "Request successfully read.", request: savedRequest },
+          200
+        );
+      } else {
+        const updatedRequest = FriendRequest.findByIdAndUpdate(requestId, {
+          accepted: true,
+        });
+        const updatedSenderReq = User.findByIdAndUpdate(senderId, {
+          $pull: { requests: requestId },
+          $push: { friends: receiverId },
+        });
+        const updatedReceiverReq = User.findByIdAndUpdate(receiverId, {
+          $pull: { requests: requestId },
+          $push: { friends: senderId },
+        });
+        const promises = await Promise.all([
+          updatedRequest,
+          updatedSenderReq,
+          updatedReceiverReq,
+        ]);
+        return createResponse(
+          res,
+          {
+            request: promises[0],
+            message: "Friend request successfully accepted",
+          },
+          200
+        );
+      }
+    } catch (e) {
+      return next(e);
+    }
   },
-];*/
+];
