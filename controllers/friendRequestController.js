@@ -185,7 +185,10 @@ exports.friendRequests_PUT = [
         }).populate("sender receiver", "name");
         return createResponse(
           res,
-          { message: "Request successfully read.", request: savedRequest },
+          {
+            message: "Request successfully read.",
+            request: { ...savedRequest, read: true },
+          },
           200
         );
       } else {
@@ -206,7 +209,7 @@ exports.friendRequests_PUT = [
         return createResponse(
           res,
           {
-            request: promises[0],
+            request: { ...promises[0], accepted: true },
             message: "Friend request successfully accepted",
           },
           200
