@@ -19,6 +19,7 @@ const Post = require("./models/post");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const fRequestRouter = require("./routes/friendRequests");
+const { jwtRenewer } = require("./middleware/jwtRenewer");
 
 const app = express();
 
@@ -59,6 +60,7 @@ app.get(
 );
 
 app.use(jwtConfirmation);
+app.use(jwtRenewer);
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/friendrequests", fRequestRouter);
