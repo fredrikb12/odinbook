@@ -193,11 +193,9 @@ exports.friendRequests_PUT = [
           accepted: true,
         });
         const updatedSenderReq = User.findByIdAndUpdate(senderId, {
-          $pull: { requests: requestId },
           $push: { friends: receiverId },
         });
         const updatedReceiverReq = User.findByIdAndUpdate(receiverId, {
-          $pull: { requests: requestId },
           $push: { friends: senderId },
         });
         const promises = await Promise.all([
