@@ -14,6 +14,16 @@ exports.posts_POST = [
     .isLength({ min: 1, max: 2000 })
     .withMessage("Text cannot be longer than 2000 characters."),
   async (req, res, next) => {
+    if (hasValidationError(req)) {
+      return createResponse(
+        res,
+        {
+          message: "Something went wrong posting this post.",
+          errors: getValidationErrors(req),
+        },
+        400
+      );
+    }
     try {
       const post = new Post({
         user: req.cookieToken._id,
