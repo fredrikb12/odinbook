@@ -47,3 +47,46 @@ exports.posts_POST = [
     }
   },
 ];
+
+exports.posts_userIndexPosts_GET = async (req, res, next) => {
+  const currentUserId = req.cookieToken._id;
+  const currentUser = await User.findById(currentUserId)
+    .populate({
+      path: "posts",
+      populate: [
+        { path: "user", select: "name " },
+        { path: "likes", populate: { path: "user", select: "name" } },
+        { path: "comments", populate: { path: "user", select: "name" } },
+      ],
+    })
+    .catch((e) => next(e));
+  if (!currentUser) {
+    return createResponse(
+      res,
+      { message: "This user does not exist.", posts: [], user: currentUserId },
+      404
+    );
+  } else {
+    const friends = await User.find({
+      friends: currentUserId,
+    })
+      .populate({
+        path: "posts",
+        populate: [{ path: "user", select: "name" }],
+      })
+      .select("posts")
+      .sort({ createdAt: "desc" });
+    const friendPosts = friends
+      .map((friend) => {
+        return friend.posts;
+      })
+      .reduce((postsArray, returnArray) => {
+        returnArray = [...returnArray, ...postsArray];
+        return returnArray;
+      }, []);
+    const userPosts = currentUser.posts.sort(
+      (a, b) => b.createdAt - a.createdAt
+    );
+    return createResponse(res, { posts: [...userPosts, ...friendPosts] }, 200);
+  }
+};
