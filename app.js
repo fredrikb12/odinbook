@@ -20,6 +20,7 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const postsRouter = require("./routes/posts");
 const fRequestRouter = require("./routes/friendRequests");
+const likesRouter = require("./routes/likes");
 const { jwtRenewer } = require("./middleware/jwtRenewer");
 
 const app = express();
@@ -66,5 +67,5 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/friendrequests", fRequestRouter);
 app.use("/posts", postsRouter);
-
+app.use("/likes", likesRouter);
 module.exports = app;
