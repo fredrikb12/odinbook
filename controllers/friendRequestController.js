@@ -169,7 +169,6 @@ exports.friendRequests_PUT = [
     const senderId = request.sender._id.toString();
     const receiverId = request.receiver._id.toString();
     if (senderId !== currentUserId && receiverId !== currentUserId) {
-      console.log("Current user is not authorized to change this resource");
       return createResponse(
         res,
         { message: "You are not authorized to change this request status" },
