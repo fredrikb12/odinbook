@@ -10,6 +10,7 @@ passport.use(
       clientSecret: process.env.FB_SECRET,
       callbackURL: "http://localhost:3000/auth/redirect/facebook",
       enableProof: true,
+      profileFields: ["id", "displayName", "photos"],
     },
     async (accessToken, refreshToken, profile, cb) => {
       const foundUser = await mongoDB
@@ -20,6 +21,7 @@ passport.use(
           {
             name: profile.displayName,
             facebook_id: profile.id,
+            picture: profile._json.picture.data.url,
           },
           cb
         );
