@@ -3,6 +3,8 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const passport = require("passport");
+const cors = require("cors");
+const helmet = require("helmet");
 const FacebookStrategy = require("passport-facebook");
 require("dotenv").config();
 require("./configs/mongoConfig");
@@ -27,6 +29,24 @@ const { jwtRenewer } = require("./middleware/jwtRenewer");
 const app = express();
 
 require("./configs/passport");
+
+const origins = ["http://localhost:3000", "http://localhost:3001"];
+
+app.use(
+  cors({
+    credentials: true,
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (origins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not allow access from the specified origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+  })
+);
+app.use(helmet());
 
 app.use(
   session({
