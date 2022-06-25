@@ -54,9 +54,12 @@ exports.posts_userIndexPosts_GET = async (req, res, next) => {
     .populate({
       path: "posts",
       populate: [
-        { path: "user", select: "name " },
-        { path: "likes", populate: { path: "user", select: "name" } },
-        { path: "comments", populate: { path: "user", select: "name" } },
+        { path: "user", select: "name picture" },
+        { path: "likes", populate: { path: "user", select: "name picture" } },
+        {
+          path: "comments",
+          populate: { path: "user", select: "name picture" },
+        },
       ],
     })
     .catch((e) => next(e));
@@ -72,7 +75,7 @@ exports.posts_userIndexPosts_GET = async (req, res, next) => {
     })
       .populate({
         path: "posts",
-        populate: [{ path: "user", select: "name" }],
+        populate: [{ path: "user", select: "name picture" }],
       })
       .select("posts")
       .sort({ createdAt: "desc" });

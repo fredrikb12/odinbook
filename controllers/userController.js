@@ -26,7 +26,7 @@ exports.users_userId_GET = async (req, res, next) => {
       .populate({
         path: "posts",
         populate: [
-          { path: "user", select: "name " },
+          { path: "user", select: "name picture" },
           { path: "likes", populate: { path: "user", select: "name" } },
           { path: "comments", populate: { path: "user", select: "name" } },
         ],
@@ -47,7 +47,7 @@ exports.users_userId_GET = async (req, res, next) => {
       .populate({
         path: "posts",
         populate: [
-          { path: "user", select: "name " },
+          { path: "user", select: "name picture " },
           { path: "likes", populate: { path: "user", select: "name" } },
           { path: "comments", populate: { path: "user", select: "name" } },
         ],
