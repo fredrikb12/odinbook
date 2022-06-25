@@ -6,7 +6,7 @@ const jwtAuth = (req, res, next) => {
   const token = req.cookies.odinbooktoken;
   if (!token) {
     console.log("no token found; redirecting...");
-    return res.status(403).redirect("http://localhost:3000/login/facebook");
+    return res.status(403).redirect("http://localhost:3001/login/");
   }
   try {
     const data = jwt.verify(token, process.env.JWT_SECRET);
