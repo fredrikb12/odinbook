@@ -24,6 +24,7 @@ const postsRouter = require("./routes/posts");
 const fRequestRouter = require("./routes/friendRequests");
 const likesRouter = require("./routes/likes");
 const commentsRouter = require("./routes/comments");
+const authRouter = require("./routes/auth");
 const { jwtRenewer } = require("./middleware/jwtRenewer");
 
 const app = express();
@@ -78,7 +79,7 @@ app.get(
     console.log("setting token:", auth.genToken(req.user));
     return res
       .cookie("odinbooktoken", auth.genToken(req.user), { httpOnly: true })
-      .redirect("/");
+      .redirect("http://localhost:3001/login-redirect");
   }
 );
 
@@ -90,4 +91,5 @@ app.use("/friendrequests", fRequestRouter);
 app.use("/posts", postsRouter);
 app.use("/likes", likesRouter);
 app.use("/comments", commentsRouter);
+app.use("/auth", authRouter);
 module.exports = app;
