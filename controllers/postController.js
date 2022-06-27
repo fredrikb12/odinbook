@@ -93,3 +93,17 @@ exports.posts_userIndexPosts_GET = async (req, res, next) => {
     return createResponse(res, { posts: [...userPosts, ...friendPosts] }, 200);
   }
 };
+
+exports.posts_postId_DELETE = async (req, res, next) => {
+  const currentUser = req.cookieToken._id;
+  const { postId } = req.params;
+  const deletedPost = await Post.findOneAndDelete({
+    _id: postId,
+    user: currentUser,
+  }).catch((e) => next(e));
+  return createResponse(
+    res,
+    { post: deletedPost, message: "Post deleted." },
+    200
+  );
+};
