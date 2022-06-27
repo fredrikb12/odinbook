@@ -86,12 +86,6 @@ exports.users_userId_removeFriend = [
     const targetUser = req.body.userId;
 
     try {
-      const savedCurrent = await User.findByIdAndUpdate(currentUser, {
-        $pull: { friends: targetUser },
-      });
-      const savedTarget = await User.findByIdAndUpdate(targetUser, {
-        $pull: { friends: currentUser },
-      });
       const deletedRequest = await FriendRequest.findOneAndDelete({
         $or: [
           {
@@ -105,6 +99,13 @@ exports.users_userId_removeFriend = [
           },
         ],
       });
+      const savedCurrent = await User.findByIdAndUpdate(currentUser, {
+        $pull: { friends: targetUser, requests: deletedRequest?._id },
+      });
+      const savedTarget = await User.findByIdAndUpdate(targetUser, {
+        $pull: { friends: currentUser, requests: deletedRequest?._id },
+      });
+
       return createResponse(res, { request: deletedRequest }, 200);
     } catch (e) {
       return next(e);
