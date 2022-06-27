@@ -101,6 +101,9 @@ exports.posts_postId_DELETE = async (req, res, next) => {
     _id: postId,
     user: currentUser,
   }).catch((e) => next(e));
+  const savedUser = await User.findByIdAndUpdate(currentUser, {
+    $pull: { posts: postId },
+  });
   return createResponse(
     res,
     { post: deletedPost, message: "Post deleted." },
