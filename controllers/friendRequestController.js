@@ -30,9 +30,12 @@ exports.friendRequests_POST = [
 
     const sender = req.cookieToken._id;
     const receiver = req.body.receiver;
-    const prevRequest = await FriendRequest.findOne({ sender, receiver }).catch(
-      (e) => next(e)
-    );
+    const prevRequest = await FriendRequest.findOne({
+      $or: [
+        { sender, receiver },
+        { receiver: sender, sender: receiver },
+      ],
+    }).catch((e) => next(e));
     if (prevRequest) {
       return createResponse(res, { message: "Request already sent." }, 400);
     }
