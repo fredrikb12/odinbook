@@ -2,6 +2,8 @@ const passport = require("passport");
 const FacebookStrategy = require("passport-facebook");
 const User = require("../models/user");
 const mongoDB = require("../db-helpers/mongodb").mongoDB;
+const LocalStrategy = require("passport-local").Strategy;
+const bcrypt = require("bcryptjs");
 
 passport.use(
   new FacebookStrategy(
@@ -21,7 +23,7 @@ passport.use(
           {
             name: profile.displayName,
             facebook_id: profile.id,
-            picture: profile._json.picture.data.url,
+            picture: profile._json.picture.data.url || null,
           },
           cb
         );
@@ -30,6 +32,26 @@ passport.use(
       }
     }
   )
+);
+
+passport.use(
+  new LocalStrategy(async (username, password, done) => {
+    try {
+      const user = await User.findOne({ username: username });
+      if (!user) {
+        return done(null, false, { message: "Incorrect username" });
+      }
+      bcrypt.compare(password, user.password, (err, res) => {
+        if (res) {
+          return done(null, user);
+        } else {
+          return done(null, false, { message: "Incorrect password" });
+        }
+      });
+    } catch (e) {
+      done(e);
+    }
+  })
 );
 
 passport.serializeUser((user, done) => {
