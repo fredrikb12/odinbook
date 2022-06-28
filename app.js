@@ -49,7 +49,20 @@ app.use(
     },
   })
 );
+
 app.use(helmet());
+app.use((req, res, next) => {
+  if (origins.indexOf(req.headers.origin) !== -1) {
+    console.log(req.headers.origin);
+    console.log(origins.indexOf(req.headers.origin));
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
+  }
+  next();
+});
 
 app.use(
   session({
