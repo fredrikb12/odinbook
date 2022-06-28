@@ -11,6 +11,7 @@ require("./configs/mongoConfig");
 const session = require("express-session");
 const jwtConfirmation = require("./middleware/jwtAuth");
 const auth = require("./utils/auth");
+const { genToken } = require("./utils/auth");
 
 const User = require("./models/user");
 const Comment = require("./models/comment");
@@ -26,6 +27,7 @@ const likesRouter = require("./routes/likes");
 const commentsRouter = require("./routes/comments");
 const authRouter = require("./routes/auth");
 const { jwtRenewer } = require("./middleware/jwtRenewer");
+const { users_POST } = require("./controllers/userController");
 
 const app = express();
 
@@ -82,6 +84,26 @@ app.get(
       .redirect("http://localhost:3001/login-redirect");
   }
 );
+
+app.post("/users", users_POST);
+app.post("/auth/login", async (req, res, next) => {
+  console.log("logging in");
+  passport.authenticate("local", { session: false }, (err, user, info) => {
+    if (err) return next(err);
+    if (!user) {
+      return createResponse(res, {
+        message: "Something is not right",
+        user,
+        errors: ["Incorrect username or password"],
+      });
+    } else {
+      return res
+        .status(200)
+        .cookie("odinbooktoken", genToken(user), { httpOnly: true })
+        .json({ user: user });
+    }
+  })(req, res, next);
+});
 
 app.use(jwtConfirmation);
 app.use(jwtRenewer);
