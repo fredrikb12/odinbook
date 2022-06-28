@@ -6,6 +6,8 @@ const {
   hasValidationError,
   getValidationErrors,
 } = require("../utils/validationHelpers");
+const bcrypt = require("bcryptjs/dist/bcrypt");
+const { genToken } = require("../utils/auth");
 
 exports.users_GET = async (req, res, next) => {
   const users = await User.find()
@@ -109,6 +111,56 @@ exports.users_userId_removeFriend = [
       return createResponse(res, { request: deletedRequest }, 200);
     } catch (e) {
       return next(e);
+    }
+  },
+];
+
+exports.users_POST = [
+  body("name", "Name is required")
+    .exists()
+    .escape()
+    .isLength({ min: 1, max: 100 }),
+  body("username").isEmail().normalizeEmail({ gmail_remove_dots: false }),
+  body("password", "password must be at least 5 characters long.")
+    .trim()
+    .isLength({ min: 5, max: 50 })
+    .escape(),
+  body("password_confirm", "Passwords must match")
+    .exists()
+    .trim()
+    .escape()
+    .custom((value, { req }) => value === req.body.password),
+  async (req, res, next) => {
+    if (hasValidationError(req)) {
+      return createResponse(res, {
+        name: req.body.name || "",
+        username: req.body.username || "",
+        errors: getValidationErrors(req),
+      });
+    }
+    const user = await User.findOne({ username: req.body.username }).catch(
+      (e) => next(e)
+    );
+    if (user) {
+      return createResponse(res, {
+        name: req.body.name || "",
+        username: req.body.username || "",
+        errors: ["Email is already in use."],
+      });
+    } else {
+      bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
+        if (err) return next(err);
+        const user = new User({
+          name: req.body.name,
+          username: req.body.username,
+          password: hashedPassword,
+        });
+        const savedUser = await user.save().catch((e) => next(e));
+        return res
+          .cookie("odinbooktoken", genToken(savedUser), { httpOnly: true })
+          .status(200)
+          .redirect("http://localhost:3001/");
+      });
     }
   },
 ];
