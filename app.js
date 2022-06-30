@@ -33,7 +33,11 @@ const app = express();
 
 require("./configs/passport");
 
-const origins = ["http://localhost:3000", "http://localhost:3001"];
+const origins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://fredrikb12.github.io/odinbook-client/",
+];
 
 app.use(
   cors({
@@ -92,9 +96,10 @@ app.get(
     console.log("authentication succeeded");
     console.log(req.user);
     console.log("setting token:", auth.genToken(req.user));
-    return res
-      .cookie("odinbooktoken", auth.genToken(req.user), { httpOnly: true })
-      .redirect("http://localhost:3001/login-redirect");
+    return res.cookie("odinbooktoken", auth.genToken(req.user), {
+      httpOnly: true,
+    });
+    json({ user: req.user });
   }
 );
 
