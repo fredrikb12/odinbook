@@ -36,7 +36,7 @@ require("./configs/passport");
 const origins = [
   "http://localhost:3000",
   "http://localhost:3001",
-  "https://fredrikb12.github.io/odinbook-client/#/",
+  "https://odinbook-client.vercel.app/",
 ];
 
 app.use(
@@ -100,7 +100,7 @@ app.get(
       .cookie("odinbooktoken", auth.genToken(req.user), {
         httpOnly: true,
       })
-      .redirect("https://fredrikb12.github.io/odinbook-client/#/");
+      .redirect("https://odinbook-client.vercel.app/");
   }
 );
 
