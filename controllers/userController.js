@@ -52,6 +52,7 @@ exports.users_userId_GET = async (req, res, next) => {
           },
         ],
       })
+      .populate("requests", "sender receiver accepted")
       .populate({
         path: "posts",
         populate: [
