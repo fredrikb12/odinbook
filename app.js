@@ -132,4 +132,13 @@ app.use("/posts", postsRouter);
 app.use("/likes", likesRouter);
 app.use("/comments", commentsRouter);
 app.use("/auth", authRouter);
+
+app.use((req, res, next) => {
+  next(createError(404));
+});
+
+app.use((err, req, res, next) => {
+  res.status(err.status || 500)
+  res.send("Something has gone wrong.")
+});
 module.exports = app;
