@@ -120,8 +120,10 @@ exports.users_POST = [
     .exists()
     .escape()
     .isLength({ min: 1, max: 100 }),
-  body("username").isEmail().normalizeEmail({ gmail_remove_dots: false }),
-  body("password", "password must be at least 5 characters long.")
+  body("username", "Username must be a valid email")
+    .isEmail()
+    .normalizeEmail({ gmail_remove_dots: false }),
+  body("password", "Password must be at least 5 characters long.")
     .trim()
     .isLength({ min: 5, max: 50 })
     .escape(),
@@ -132,21 +134,29 @@ exports.users_POST = [
     .custom((value, { req }) => value === req.body.password),
   async (req, res, next) => {
     if (hasValidationError(req)) {
-      return createResponse(res, {
-        name: req.body.name || "",
-        username: req.body.username || "",
-        errors: getValidationErrors(req),
-      });
+      return createResponse(
+        res,
+        {
+          name: req.body.name || "",
+          username: req.body.username || "",
+          errors: [...getValidationErrors(req).errors],
+        },
+        400
+      );
     }
     const user = await User.findOne({ username: req.body.username }).catch(
       (e) => next(e)
     );
     if (user) {
-      return createResponse(res, {
-        name: req.body.name || "",
-        username: req.body.username || "",
-        errors: ["Email is already in use."],
-      });
+      return createResponse(
+        res,
+        {
+          name: req.body.name || "",
+          username: req.body.username || "",
+          errors: ["Email is already in use."],
+        },
+        200
+      );
     } else {
       bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
         if (err) return next(err);
@@ -158,8 +168,8 @@ exports.users_POST = [
         const savedUser = await user.save().catch((e) => next(e));
         return res
           .cookie("odinbooktoken", genToken(savedUser), { httpOnly: true })
-          .status(200)
-          .redirect("http://localhost:3001/");
+          .status(201)
+          .json({ user: savedUser._id });
       });
     }
   },
