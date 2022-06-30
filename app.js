@@ -96,10 +96,11 @@ app.get(
     console.log("authentication succeeded");
     console.log(req.user);
     console.log("setting token:", auth.genToken(req.user));
-    return res.cookie("odinbooktoken", auth.genToken(req.user), {
-      httpOnly: true,
-    });
-    json({ user: req.user });
+    return res
+      .cookie("odinbooktoken", auth.genToken(req.user), {
+        httpOnly: true,
+      })
+      .redirect("http://localhost:3001/login-redirect");
   }
 );
 
@@ -138,7 +139,7 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(err.status || 500)
-  res.send("Something has gone wrong.")
+  res.status(err.status || 500);
+  res.send("Something has gone wrong.");
 });
 module.exports = app;
