@@ -75,7 +75,10 @@ exports.posts_userIndexPosts_GET = async (req, res, next) => {
     })
       .populate({
         path: "posts",
-        populate: [{ path: "user", select: "name picture" }],
+        populate: [
+          { path: "user", select: "name picture" },
+          { path: "likes", select: "user" },
+        ],
       })
       .select("posts")
       .sort({ createdAt: "desc" });
