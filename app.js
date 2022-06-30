@@ -100,7 +100,7 @@ app.get(
       .cookie("odinbooktoken", auth.genToken(req.user), {
         httpOnly: true,
       })
-      .redirect("http://localhost:3001/login-redirect");
+      .redirect("https://fredrikb12.github.io/odinbook-client/#/");
   }
 );
 
