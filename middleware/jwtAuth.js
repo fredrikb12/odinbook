@@ -18,7 +18,7 @@ const jwtAuth = (req, res, next) => {
     };
     next();
   } catch (e) {
-    return res.status(403).redirect("http://localhost:3000/login/facebook");
+    return res.status(403).json({ message: "Something went wrong." });
   }
 };
 

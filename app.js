@@ -36,7 +36,7 @@ require("./configs/passport");
 const origins = [
   "http://localhost:3000",
   "http://localhost:3001",
-  "https://fredrikb12.github.io/odinbook-client/",
+  "https://fredrikb12.github.io/odinbook-client/#/",
 ];
 
 app.use(
