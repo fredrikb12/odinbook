@@ -75,6 +75,17 @@ exports.likes_DELETE = [
       }
     }),
   async (req, res, next) => {
+    if (hasValidationError(req)) {
+      return createResponse(
+        res,
+        {
+          message: "Something went wrong liking this post.",
+          errors: getValidationErrors(req),
+        },
+        400
+      );
+    }
+
     const postId = req.body.postId;
     const currentUserId = req.cookieToken._id;
 
@@ -83,15 +94,11 @@ exports.likes_DELETE = [
         user: currentUserId,
         post: postId,
       });
-      const savedPost = Post.findByIdAndUpdate(postId, {
+      const savedPost = await Post.findByIdAndUpdate(postId, {
         $pull: { likes: deletedLike._id },
       });
 
-      return res.createResponse(
-        res,
-        { message: "Post successfully unliked" },
-        200
-      );
+      return createResponse(res, { message: "Post successfully unliked" }, 200);
     } catch (e) {
       return next(e);
     }
