@@ -99,6 +99,9 @@ app.get(
     console.log("setting token:", auth.genToken(req.user));
     return res
       .cookie("odinbooktoken", auth.genToken(req.user), {
+        sameSite: "none",
+        secure: true,
+        domain: "https://conservative-mountie-67830.herokuapp.com/",
         httpOnly: true,
       })
       .redirect("https://fredrikb12.github.io/odinbook-client");
@@ -119,7 +122,12 @@ app.post("/auth/login", async (req, res, next) => {
     } else {
       return res
         .status(200)
-        .cookie("odinbooktoken", genToken(user), { httpOnly: true })
+        .cookie("odinbooktoken", genToken(user), {
+          sameSite: "none",
+          secure: true,
+          domain: "https://conservative-mountie-67830.herokuapp.com/",
+          httpOnly: true,
+        })
         .json({ user: user });
     }
   })(req, res, next);
