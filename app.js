@@ -36,7 +36,8 @@ require("./configs/passport");
 const origins = [
   "http://localhost:3000",
   "http://localhost:3001",
-  "https://odinbook-client.vercel.app/",
+  "http://localhost:8080",
+  "https://fredrikb12.github.io",
 ];
 
 app.use(
@@ -82,7 +83,7 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "../client/build")));
 
 app.get("/login/facebook", passport.authenticate("facebook"));
 
@@ -133,6 +134,10 @@ app.use("/posts", postsRouter);
 app.use("/likes", likesRouter);
 app.use("/comments", commentsRouter);
 app.use("/auth", authRouter);
+
+app.get("*", (req, res, next) => {
+  res.sendFile(path.join(__dirname, "./client/build/index.html"));
+});
 
 app.use((req, res, next) => {
   next(createError(404));
