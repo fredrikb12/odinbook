@@ -99,6 +99,7 @@ app.get(
     console.log("setting token:", auth.genToken(req.user));
     return res
       .cookie("odinbooktoken", auth.genToken(req.user), {
+        sameSite:true,
         secure: true,
         domain: "https://conservative-mountie-67830.herokuapp.com/",
         httpOnly: true,
@@ -122,6 +123,7 @@ app.post("/auth/login", async (req, res, next) => {
       return res
         .status(200)
         .cookie("odinbooktoken", genToken(user), {
+          sameSite:true,
           secure: true,
           domain: "https://conservative-mountie-67830.herokuapp.com/",
           httpOnly: true,
