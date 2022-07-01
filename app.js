@@ -101,7 +101,7 @@ app.get(
       .cookie("odinbooktoken", auth.genToken(req.user), {
         httpOnly: true,
       })
-      .redirect("https://odinbook-client.vercel.app/");
+      .redirect("https://fredrikb12.github.io/odinbook-client");
   }
 );
 
