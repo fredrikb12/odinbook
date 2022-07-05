@@ -96,12 +96,12 @@ app.get(
   (req, res) => {
     console.log("authentication succeeded");
     console.log(req.user);
-    console.log("setting token:", auth.genToken(req.user));
+    console.log("setting token:", auth.genToken(Sreq.user));
     return res
       .cookie("odinbooktoken", auth.genToken(req.user), {
         httpOnly: true,
         secure: true,
-        sameSite: "none",
+        sameSite: "lax",
       })
       .redirect("https://fredrikb12.github.io/odinbook-client");
   }
