@@ -103,7 +103,7 @@ app.get(
         sameSite: "none",
         secure: true,
       })
-      .redirect("http://localhost:3001/login-redirect");
+      .redirect("https://fredrikb12.github.io/odinbook-client");
   }
 );
 
