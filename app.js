@@ -124,7 +124,7 @@ app.post("/auth/login", async (req, res, next) => {
         .cookie("odinbooktoken", genToken(user), {
           httpOnly: true,
           secure: true,
-          sameSite: "none",
+          sameSite: "lax",
         })
         .json({ user: user });
     }

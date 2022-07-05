@@ -10,7 +10,7 @@ passport.use(
     {
       clientID: process.env.FB_ID,
       clientSecret: process.env.FB_SECRET,
-      callbackURL: "http://localhost:3000/auth/redirect/facebook",
+      callbackURL: "auth/redirect/facebook",
       enableProof: true,
       profileFields: ["id", "displayName", "photos"],
     },
