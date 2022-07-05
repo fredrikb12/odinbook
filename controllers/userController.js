@@ -170,7 +170,7 @@ exports.users_POST = [
         return res
           .cookie("odinbooktoken", genToken(savedUser), {
             httpOnly: true,
-            sameSite: "none",
+            sameSite: "None",
         secure: true,
           })
           .status(201)
