@@ -78,6 +78,10 @@ exports.posts_userIndexPosts_GET = async (req, res, next) => {
         populate: [
           { path: "user", select: "name picture" },
           { path: "likes", select: "user" },
+          {
+            path: "comments",
+            populate: { path: "user", select: "name picture" },
+          },
         ],
       })
       .select("posts")

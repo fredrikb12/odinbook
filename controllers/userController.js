@@ -169,10 +169,9 @@ exports.users_POST = [
         const savedUser = await user.save().catch((e) => next(e));
         return res
           .cookie("odinbooktoken", genToken(savedUser), {
-            sameSite:true,
-            secure: true,
-            domain: "https://conservative-mountie-67830.herokuapp.com/",
             httpOnly: true,
+            sameSite: "none",
+        secure: true,
           })
           .status(201)
           .json({ user: savedUser._id });

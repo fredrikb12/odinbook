@@ -7,9 +7,9 @@ exports.jwtRenewer = (req, res, next) => {
   //if jwt expires within 15 minutes
   if (expiry - new Date().getTime() / 1000 < 900) {
     res.cookie("odinbooktoken", genToken(token), {
-      secure: true,
-      domain: "https://conservative-mountie-67830.herokuapp.com/",
       httpOnly: true,
+      sameSite: "none",
+      secure: true,
     });
   }
   next();
