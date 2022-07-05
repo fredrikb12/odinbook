@@ -8,8 +8,8 @@ exports.jwtRenewer = (req, res, next) => {
   if (expiry - new Date().getTime() / 1000 < 900) {
     res.cookie("odinbooktoken", genToken(token), {
       httpOnly: true,
-      sameSite: "None",
       secure: true,
+      sameSite: "none",
     });
   }
   next();
