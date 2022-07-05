@@ -101,7 +101,7 @@ app.get(
       .cookie("odinbooktoken", auth.genToken(req.user), {
         httpOnly: true,
         secure: true,
-        sameSite: "lax",
+        sameSite: "none",
       })
       .redirect("https://fredrikb12.github.io/odinbook-client");
   }
@@ -124,7 +124,7 @@ app.post("/auth/login", async (req, res, next) => {
         .cookie("odinbooktoken", genToken(user), {
           httpOnly: true,
           secure: true,
-          sameSite: "lax",
+          sameSite: "none",
         })
         .json({ user: user });
     }
