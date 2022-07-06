@@ -38,6 +38,8 @@ const origins = [
   "http://localhost:3001",
   "http://localhost:8080",
   "https://fredrikb12.github.io",
+  "http://odinbook.xyz",
+  "https://odinbook.xyz",
 ];
 
 app.use(
