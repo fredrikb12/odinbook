@@ -114,11 +114,15 @@ app.post("/auth/login", async (req, res, next) => {
   passport.authenticate("local", { session: false }, (err, user, info) => {
     if (err) return next(err);
     if (!user) {
-      return createResponse(res, {
-        message: "Something is not right",
-        user,
-        errors: ["Incorrect username or password"],
-      });
+      return createResponse(
+        res,
+        {
+          message: "Something is not right",
+          user,
+          errors: ["Incorrect username or password"],
+        },
+        500
+      );
     } else {
       return res
         .status(200)
