@@ -150,6 +150,6 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
-  res.send("Something has gone wrong.");
+  return res.send("Something has gone wrong.");
 });
 module.exports = app;
