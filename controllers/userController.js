@@ -39,6 +39,7 @@ exports.users_userId_GET = async (req, res, next) => {
           { path: "comments", populate: { path: "user", select: "name" } },
         ],
       })
+      .sort({ createdAt: "desc" })
       .catch((e) => next(e));
   } else {
     user = await User.findById(req.params.userId)
