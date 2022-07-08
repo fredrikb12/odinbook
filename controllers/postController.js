@@ -84,8 +84,8 @@ exports.posts_userIndexPosts_GET = async (req, res, next) => {
           },
         ],
       })
-      .select("posts")
-      .sort({ createdAt: "desc" });
+      .select("posts");
+
     const friendPosts = friends
       .map((friend) => {
         return friend.posts;
@@ -94,10 +94,11 @@ exports.posts_userIndexPosts_GET = async (req, res, next) => {
         returnArray = [...returnArray, ...postsArray];
         return returnArray;
       }, []);
-    const userPosts = currentUser.posts.sort(
-      (a, b) => b.createdAt - a.createdAt
-    );
-    return createResponse(res, { posts: [...userPosts, ...friendPosts] }, 200);
+
+    const allPosts = [...currentUser.posts, ...friendPosts];
+    const sortedPosts = allPosts.sort((a, b) => b.createdAt - a.createdAt);
+
+    return createResponse(res, { posts: sortedPosts }, 200);
   }
 };
 
