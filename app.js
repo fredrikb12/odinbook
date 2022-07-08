@@ -37,9 +37,6 @@ require("./configs/passport");
 const origins = [
   "http://localhost:3000",
   "http://localhost:3001",
-  "http://localhost:8080",
-  "https://fredrikb12.github.io",
-  "http://odinbook.xyz",
   "https://odinbook.xyz",
 ];
 
@@ -99,12 +96,12 @@ app.get(
   (req, res) => {
     console.log("authentication succeeded");
     console.log(req.user);
-    console.log("setting token:", auth.genToken(Sreq.user));
+    console.log("setting token:", auth.genToken(req.user));
     return res
       .cookie("odinbooktoken", auth.genToken(req.user), {
         httpOnly: true,
       })
-      .redirect("https://fredrikb12.github.io/odinbook-client");
+      .redirect("https://odinbook.xyz");
   }
 );
 
@@ -143,10 +140,6 @@ app.use("/posts", postsRouter);
 app.use("/likes", likesRouter);
 app.use("/comments", commentsRouter);
 app.use("/auth", authRouter);
-
-app.get("*", (req, res, next) => {
-  res.sendFile(path.join(__dirname, "./client/build/index.html"));
-});
 
 app.use((req, res, next) => {
   next(createError(404));
