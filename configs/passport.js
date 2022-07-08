@@ -10,7 +10,7 @@ passport.use(
     {
       clientID: process.env.FB_ID,
       clientSecret: process.env.FB_SECRET,
-      callbackURL: "auth/redirect/facebook",
+      callbackURL: "https://odinbook.xyz/auth/redirect/facebook",
       enableProof: true,
       profileFields: ["id", "displayName", "photos"],
     },
