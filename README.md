@@ -8,7 +8,7 @@ You may find project specifications and other details on the [project page](http
 
 ## Demo
 
-![Desktop demo gif](../media/odinbook-demo.gif?raw=true) ![Mobile demo gif](../media/odinbook-mobile-demo.gif?raw=true)
+![Desktop demo gif](https://github.com/fredrikb12/odinbook-client/blob/media/odinbook-demo.gif?raw=true) ![Mobile demo gif](https://github.com/fredrikb12/odinbook-client/blob/media/odinbook-mobile-demo.gif?raw=true)
 
 ## Features
 
